@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.yml": "yaml",
+        "*.mdx": "markdown",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "ranges": "cpp",
+        "stdexcept": "cpp"
+    }
+}

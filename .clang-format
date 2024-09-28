@@ -1,0 +1,5 @@
+ColumnLimit: 80
+Cpp11BracedListStyle: true
+AlignAfterOpenBracket: BlockIndent
+AlwaysBreakTemplateDeclarations: Yes
+IncludeBlocks: Regroup
