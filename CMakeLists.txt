@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_COLOR_DIAGNOSTICS ON)
 
 FetchContent_Declare(
   fmt
@@ -24,7 +25,7 @@ set_property(TARGET cuTensor PROPERTY CUDA_ARCHITECTURES native)
 set_target_properties(cuTensor PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 target_link_libraries(cuTensor fmt::fmt)
 
-add_executable(scratchpad test/scratchpad.cpp test/dummy.cu)
+add_executable(scratchpad test/scratchpad.cpp)
 set_source_files_properties(test/scratchpad.cpp PROPERTIES LANGUAGE CUDA)
 set_target_properties(scratchpad PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
 
