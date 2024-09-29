@@ -9,11 +9,11 @@
     switch (dtype.tag) {                                                       \
     case DataType::_INT32: {                                                   \
       using T = int32_t;                                                       \
-      return template_lambda();                                                \
+      template_lambda();                                                       \
     }                                                                          \
     case DataType::_FLOAT32: {                                                 \
       using T = float;                                                         \
-      return template_lambda();                                                \
+      template_lambda();                                                       \
     }                                                                          \
     }                                                                          \
   }

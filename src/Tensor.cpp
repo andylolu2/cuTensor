@@ -38,6 +38,26 @@ std::ostream &operator<<(std::ostream &os, const Tensor &tensor) {
     }
   }
   os << "], ";
-  os << "dtype=" << tensor.dtype << ")";
+  os << "dtype=" << tensor.dtype;
+
+  if (tensor.n_dims == 1) {
+    SWITCH_DATATYPE(tensor.dtype, ([&] {
+                      os << ", data=[";
+                      //   copy data to host
+                      std::vector<T> host(tensor.size);
+                      cudaMemcpy(
+                          host.data(), tensor.data, tensor.size * sizeof(T),
+                          cudaMemcpyDeviceToHost
+                      );
+                      for (size_t i = 0; i < tensor.size; i++) {
+                        os << host[i];
+                        if (i < tensor.size - 1) {
+                          os << ", ";
+                        }
+                      }
+                      os << "]";
+                    }));
+  }
+  os << ")";
   return os;
 }
