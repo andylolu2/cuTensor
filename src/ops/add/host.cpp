@@ -17,8 +17,7 @@ void add_tensors(Tensor a, Tensor b, Tensor c) {
   if (a.getDtype() != b.getDtype() || a.getDtype() != c.getDtype()) {
     throw std::runtime_error(fmt::format(
         "The data types of the input arrays do not match: {} != {} != {}",
-        dtype_name(a.getDtype()), dtype_name(b.getDtype()),
-        dtype_name(c.getDtype())
+        a.getDtype().name, b.getDtype().name, c.getDtype().name
     ));
   }
   if (a.getDims() != b.getDims() || a.getDims() != c.getDims()) {

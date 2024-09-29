@@ -17,10 +17,18 @@
   }
 #endif
 
-enum class DataType { INT32, FLOAT32 };
+class DataType {
+public:
+  static const DataType INT32;
+  static const DataType FLOAT32;
 
-size_t dtype_size(DataType dtype);
+  const std::string name;
+  const size_t size;
+  bool operator==(const DataType &dtype) const;
+  bool operator!=(const DataType &dtype) const;
+  friend std::ostream &operator<<(std::ostream &os, const DataType &dtype);
 
-std::string dtype_name(DataType dtype);
-
-std::ostream &operator<<(std::ostream &os, DataType dtype);
+private:
+  DataType(std::string name, size_t size);
+  DataType(DataType const &) = delete;
+};

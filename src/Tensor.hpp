@@ -9,24 +9,24 @@
 
 class Tensor {
 private:
-  ConstArray dims;
-  ConstArray strides;
-  size_t n_dims;
-  size_t size;
-  DataType dtype;
-  void *data;
+  const ConstArray dims;
+  const ConstArray strides;
+  const size_t n_dims;
+  const size_t size;
+  const DataType &dtype;
+  void *const data;
 
 public:
   Tensor(
       std::initializer_list<size_t> dims, std::initializer_list<size_t> strides,
-      void *data, DataType dtype
+      void *data, const DataType &dtype
   );
   ~Tensor();
 
   void *getData() const;
   size_t getSize() const;
   size_t getNDims() const;
-  DataType getDtype() const;
+  const DataType &getDtype() const;
   ConstArray getDims() const;
   ConstArray getStrides() const;
 

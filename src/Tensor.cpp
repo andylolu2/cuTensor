@@ -2,19 +2,13 @@
 
 Tensor::Tensor(
     std::initializer_list<size_t> dims, std::initializer_list<size_t> strides,
-    void *data, DataType dtype
+    void *data, const DataType &dtype
 )
     : n_dims(dims.size()), dtype(dtype), data(data), dims(dims),
-      strides(strides) {
+      strides(strides), size(prod(dims)) {
   if (dims.size() != strides.size()) {
     throw std::invalid_argument("Number of dimensions and strides must match");
   }
-
-  size_t numElements = 1;
-  for (size_t dimSize : dims) {
-    numElements *= dimSize;
-  }
-  this->size = numElements;
 }
 
 Tensor::~Tensor() {}
@@ -22,7 +16,7 @@ Tensor::~Tensor() {}
 void *Tensor::getData() const { return data; }
 size_t Tensor::getSize() const { return size; }
 size_t Tensor::getNDims() const { return n_dims; }
-DataType Tensor::getDtype() const { return dtype; }
+const DataType &Tensor::getDtype() const { return dtype; }
 ConstArray Tensor::getDims() const { return dims; }
 ConstArray Tensor::getStrides() const { return strides; }
 
