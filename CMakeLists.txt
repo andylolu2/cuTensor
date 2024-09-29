@@ -8,6 +8,7 @@ enable_language(CUDA CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 FetchContent_Declare(
   fmt
@@ -16,10 +17,19 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(fmt)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.cu")
-add_executable(scratchpad test/scratchpad.cu ${SOURCES})
+add_library(cuTensor SHARED ${SOURCES})
+target_include_directories(cuTensor PUBLIC src)
+set_source_files_properties(${SOURCES} PROPERTIES LANGUAGE CUDA)
+set_property(TARGET cuTensor PROPERTY CUDA_ARCHITECTURES native)
+set_target_properties(cuTensor PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+target_link_libraries(cuTensor fmt::fmt)
+
+add_executable(scratchpad test/scratchpad.cpp test/dummy.cu)
+set_source_files_properties(test/scratchpad.cpp PROPERTIES LANGUAGE CUDA)
+set_target_properties(scratchpad PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
 
 # Optionally, you can add include directories if you have headers in a specific directory
 target_include_directories(scratchpad PRIVATE src)
 
 # Optionally, you can link libraries if your project depends on them
-target_link_libraries(scratchpad fmt::fmt)
+target_link_libraries(scratchpad cuTensor)

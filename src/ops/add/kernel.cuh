@@ -1,40 +1,20 @@
 #pragma once
 
-#include "common/cuda_utils.cuh"
-#include "detail/Index.cuh"
-#include "detail/RuntimeArray.cuh"
-#include "fmt/format.h"
-
-#include <vector>
+#include "ConstArray.cuh"
+#include "detail/Coord.cuh"
+#include "ops/utils.cuh"
 
 template <typename T>
-__global__ void add_kernel(RuntimeArray a, RuntimeArray b, RuntimeArray c) {
+__global__ void add_kernel(
+    T *a, ConstArray a_shape, ConstArray a_strides, T *b, ConstArray b_shape,
+    ConstArray b_strides, T *c, ConstArray c_shape, ConstArray c_strides
+) {
   auto tid = global_thread_index();
-  if (tid < c.size()) {
-    Index index = Index::from_1d(tid, c.shape());
-    T a_value = *reinterpret_cast<T *>(a(index));
-    T b_value = *reinterpret_cast<T *>(b(index));
-    T *c_ptr = reinterpret_cast<T *>(c(index));
-    *c_ptr = a_value + b_value;
+  if (tid < prod(c_shape)) {
+    auto coord = from_1d(tid, c_shape);
+    auto a_offset = to_offset(coord, a_strides);
+    auto b_offset = to_offset(coord, b_strides);
+    auto c_offset = to_offset(coord, c_strides);
+    c[c_offset] = a[a_offset] + b[b_offset];
   }
-}
-
-void add(RuntimeArray a, RuntimeArray b, RuntimeArray c) {
-  if (a.size() != b.size() || a.size() != c.size()) {
-    throw std::runtime_error(fmt::format(
-        "The sizes of the input arrays do not match: {} != {} != {}", a.size(),
-        b.size(), c.size()
-    ));
-  }
-  if (a.dtype() != b.dtype() || a.dtype() != c.dtype()) {
-    throw std::runtime_error(fmt::format(
-        "The data types of the input arrays do not match: {} != {} != {}",
-        dtype_name(a.dtype()), dtype_name(b.dtype()), dtype_name(c.dtype())
-    ));
-  }
-
-  SWITCH_DATATYPE(a.dtype(), ([&] {
-                    auto [grid_dim, block_dim] = launch_config_1d(c.size());
-                    add_kernel<T><<<grid_dim, block_dim>>>(a, b, c);
-                  }));
 }

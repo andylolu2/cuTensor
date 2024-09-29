@@ -2,10 +2,16 @@
     "files.associations": {
         "*.yml": "yaml",
         "*.mdx": "markdown",
+        "*.cuh": "cuda-cpp",
+        "*.cu": "cuda-cpp",
         "array": "cpp",
         "string": "cpp",
         "string_view": "cpp",
         "ranges": "cpp",
-        "stdexcept": "cpp"
-    }
+        "stdexcept": "cpp",
+        "initializer_list": "cpp",
+        "cstddef": "c",
+        "tuple": "cpp"
+    },
+    "C_Cpp.default.compilerPath": "gcc"
 }
