@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/cuda_utils.hpp"
+#include "macros.hpp"
 
 #include <cstddef>
 #include <initializer_list>

@@ -1,5 +1,6 @@
 #include "core/DataType.hpp"
 #include "core/Tensor.hpp"
+#include "macros.hpp"
 #include "ops/elementwise/funcs.hpp"
 
 #include <cuda_runtime.h>
@@ -10,9 +11,9 @@ int main(int argc, char const *argv[]) {
   void *a_ptr;
   void *b_ptr;
   void *c_ptr;
-  cudaMalloc(&a_ptr, 10 * sizeof(float));
-  cudaMalloc(&b_ptr, 10 * sizeof(float));
-  cudaMalloc(&c_ptr, 10 * sizeof(float));
+  CUDA_CHECK(cudaMalloc(&a_ptr, 10 * sizeof(float)));
+  CUDA_CHECK(cudaMalloc(&b_ptr, 10 * sizeof(float)));
+  CUDA_CHECK(cudaMalloc(&c_ptr, 10 * sizeof(float)));
 
   Tensor a({10}, {1}, a_ptr, DataType::FLOAT32);
   Tensor b({10}, {1}, b_ptr, DataType::FLOAT32);
@@ -30,9 +31,9 @@ int main(int argc, char const *argv[]) {
 
   std::cout << "c (after): " << c << std::endl;
 
-  cudaFree(a_ptr);
-  cudaFree(b_ptr);
-  cudaFree(c_ptr);
+  CUDA_CHECK(cudaFree(a_ptr));
+  CUDA_CHECK(cudaFree(b_ptr));
+  CUDA_CHECK(cudaFree(c_ptr));
 
   return 0;
 }
