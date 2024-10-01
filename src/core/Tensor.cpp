@@ -1,4 +1,4 @@
-#include "Tensor.hpp"
+#include "core/Tensor.hpp"
 
 Tensor::Tensor(
     std::initializer_list<size_t> dims, std::initializer_list<size_t> strides,

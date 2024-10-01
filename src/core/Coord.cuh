@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ConstArray.cuh"
 #include "common/cuda_utils.hpp"
+#include "core/ConstArray.cuh"
 
 #include <string>
 

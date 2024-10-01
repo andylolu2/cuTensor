@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ConstArray.cuh"
-#include "detail/Coord.cuh"
+#include "core/ConstArray.cuh"
+#include "core/Coord.cuh"
 #include "ops/utils.cuh"
 
 template <typename T>

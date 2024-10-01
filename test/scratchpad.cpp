@@ -1,5 +1,5 @@
-#include "DataType.hpp"
-#include "Tensor.hpp"
+#include "core/DataType.hpp"
+#include "core/Tensor.hpp"
 #include "ops/add/host.hpp"
 #include "ops/fill/host.hpp"
 
@@ -26,7 +26,7 @@ int main(int argc, char const *argv[]) {
   std::cout << "b: " << b << std::endl;
   std::cout << "c (before): " << c << std::endl;
 
-  add_tensors(a, b, c);
+  add_tensors(c, a, b);
 
   std::cout << "c (after): " << c << std::endl;
 

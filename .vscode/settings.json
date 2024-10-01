@@ -12,7 +12,8 @@
         "initializer_list": "cpp",
         "cstddef": "c",
         "tuple": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "iostream": "cpp"
     },
     "C_Cpp.default.compilerPath": "gcc"
 }

@@ -1,4 +1,4 @@
-#include "ConstArray.cuh"
+#include "core/ConstArray.cuh"
 
 HOST_DEVICE ConstArray::ConstArray(std::initializer_list<size_t> list)
     : size(list.size()) {

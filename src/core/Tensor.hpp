@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ConstArray.cuh"
-#include "DataType.hpp"
+#include "core/ConstArray.cuh"
+#include "core/DataType.hpp"
 
 #include <inttypes.h>
 #include <iostream>

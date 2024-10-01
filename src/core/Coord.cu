@@ -1,4 +1,4 @@
-#include "detail/Coord.cuh"
+#include "core/Coord.cuh"
 
 #include <cassert>
 
