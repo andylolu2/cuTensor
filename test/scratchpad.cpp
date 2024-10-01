@@ -1,7 +1,6 @@
 #include "core/DataType.hpp"
 #include "core/Tensor.hpp"
-#include "ops/add/host.hpp"
-#include "ops/fill/host.hpp"
+#include "ops/elementwise/funcs.hpp"
 
 #include <cuda_runtime.h>
 #include <iostream>
@@ -19,14 +18,15 @@ int main(int argc, char const *argv[]) {
   Tensor b({10}, {1}, b_ptr, DataType::FLOAT32);
   Tensor c({10}, {1}, c_ptr, DataType::FLOAT32);
 
-  fill_tensor(a, 1.24);
-  fill_tensor(b, 2.0);
+  ops::fill(a, 1.24);
+  //   ops::fill(b, 2.0);
+  ops::rand(b, 0);
 
   std::cout << "a: " << a << std::endl;
   std::cout << "b: " << b << std::endl;
   std::cout << "c (before): " << c << std::endl;
 
-  add_tensors(c, a, b);
+  ops::add(c, a, b);
 
   std::cout << "c (after): " << c << std::endl;
 

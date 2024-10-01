@@ -4,6 +4,7 @@
 #include "core/Coord.cuh"
 #include "ops/utils.cuh"
 
+#include <curand_kernel.h>
 #include <initializer_list>
 
 struct TensorDescriptor {
@@ -21,8 +22,9 @@ __global__ void elementwise_kernel(
     auto coord = from_1d(tid, output.shape);
     auto output_offset = to_offset(coord, output.strides);
     auto output_data = reinterpret_cast<T *>(output.data);
-    output_data[output_offset] =
-        func.template operator()<T>(reinterpret_cast<T *>(tensors.data
-        )[to_offset(coord, tensors.strides)]...);
+    output_data[output_offset] = func.template call<T>(
+        coord, reinterpret_cast<T *>(tensors.data
+               )[to_offset(coord, tensors.strides)]...
+    );
   }
 }
