@@ -8,6 +8,15 @@ HOST_DEVICE ConstArray::ConstArray(std::initializer_list<size_t> list)
   }
 }
 
+HOST_DEVICE ConstArray::ConstArray(size_t size, size_t value) : size(size) {
+  for (size_t i = 0; i < size; i++) {
+    data[i] = value;
+  }
+}
+
+HOST_DEVICE const size_t *ConstArray::begin() const { return data; }
+HOST_DEVICE const size_t *ConstArray::end() const { return data + size; }
+
 HOST_DEVICE size_t ConstArray::operator[](size_t i) const { return data[i]; }
 HOST_DEVICE size_t &ConstArray::operator[](size_t i) { return data[i]; }
 

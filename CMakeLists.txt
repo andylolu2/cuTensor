@@ -24,6 +24,7 @@ set_source_files_properties(${SOURCES} PROPERTIES LANGUAGE CUDA)
 set_property(TARGET cuTensor PROPERTY CUDA_ARCHITECTURES native)
 set_target_properties(cuTensor PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 target_link_libraries(cuTensor fmt::fmt)
+target_link_libraries(cuTensor cudart cublasLt)
 
 add_executable(scratchpad test/scratchpad.cpp)
 set_source_files_properties(test/scratchpad.cpp PROPERTIES LANGUAGE CUDA)

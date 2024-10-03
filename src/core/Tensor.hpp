@@ -2,9 +2,11 @@
 
 #include "core/ConstArray.cuh"
 #include "core/DataType.hpp"
+#include "core/DeviceArray.hpp"
 
 #include <inttypes.h>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 class Tensor {
@@ -14,12 +16,16 @@ private:
   const size_t n_dims;
   const size_t size;
   const DataType &dtype;
-  void *const data;
+  std::shared_ptr<DeviceArray> data;
 
 public:
   Tensor(
       std::initializer_list<size_t> dims, std::initializer_list<size_t> strides,
-      void *data, const DataType &dtype
+      std::shared_ptr<DeviceArray> data, const DataType &dtype
+  );
+  Tensor(
+      ConstArray dims, ConstArray strides, std::shared_ptr<DeviceArray> data,
+      const DataType &dtype
   );
   ~Tensor();
 
@@ -32,3 +38,5 @@ public:
 
   friend std::ostream &operator<<(std::ostream &os, const Tensor &tensor);
 };
+
+Tensor empty(ConstArray dims, const DataType &dtype);
