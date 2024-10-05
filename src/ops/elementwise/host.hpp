@@ -36,10 +36,10 @@ void elementwise(ElementWiseFunc func, Tensor output, Tensors... tensors) {
         elementwise_lower<T>(
             func,
             TensorDescriptor{
-                output.getData(), output.getDims(), output.getStrides()
+                output.getRawData(), output.getDims(), output.getStrides()
             },
             TensorDescriptor{
-                tensors.getData(), tensors.getDims(), tensors.getStrides()
+                tensors.getRawData(), tensors.getDims(), tensors.getStrides()
             }...
         );
       })

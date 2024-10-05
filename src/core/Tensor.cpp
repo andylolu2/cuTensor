@@ -12,7 +12,7 @@ Tensor::Tensor(
 }
 
 Tensor::Tensor(
-    ConstArray dims, ConstArray strides, std::shared_ptr<DeviceArray> data,
+    SizeArray dims, SizeArray strides, std::shared_ptr<DeviceArray> data,
     const DataType &dtype
 )
     : n_dims(dims.size), dtype(dtype), data(std::move(data)), dims(dims),
@@ -24,12 +24,13 @@ Tensor::Tensor(
 
 Tensor::~Tensor() {}
 
-void *Tensor::getData() const { return data->getData(); }
+std::shared_ptr<DeviceArray> Tensor::getData() const { return data; }
+void *Tensor::getRawData() const { return data->getData(); }
 size_t Tensor::getSize() const { return size; }
 size_t Tensor::getNDims() const { return n_dims; }
 const DataType &Tensor::getDtype() const { return dtype; }
-ConstArray Tensor::getDims() const { return dims; }
-ConstArray Tensor::getStrides() const { return strides; }
+SizeArray Tensor::getDims() const { return dims; }
+SizeArray Tensor::getStrides() const { return strides; }
 
 std::ostream &operator<<(std::ostream &os, const Tensor &tensor) {
   os << "Tensor(";
@@ -57,7 +58,7 @@ std::ostream &operator<<(std::ostream &os, const Tensor &tensor) {
                       //   copy data to host
                       std::vector<T> host(tensor.size);
                       cudaMemcpy(
-                          host.data(), tensor.getData(),
+                          host.data(), tensor.getRawData(),
                           tensor.size * sizeof(T), cudaMemcpyDeviceToHost
                       );
                       for (size_t i = 0; i < tensor.size; i++) {
@@ -74,7 +75,7 @@ std::ostream &operator<<(std::ostream &os, const Tensor &tensor) {
                       //   copy data to host
                       std::vector<T> host(tensor.size);
                       cudaMemcpy(
-                          host.data(), tensor.getData(),
+                          host.data(), tensor.getRawData(),
                           tensor.size * sizeof(T), cudaMemcpyDeviceToHost
                       );
                       os << std::endl;
@@ -96,16 +97,4 @@ std::ostream &operator<<(std::ostream &os, const Tensor &tensor) {
   }
   os << ")";
   return os;
-}
-
-Tensor empty(ConstArray dims, const DataType &dtype) {
-  size_t size = prod(dims);
-  ConstArray strides(dims.size, 1);
-  for (size_t i = dims.size - 1; i-- > 0;) {
-    strides[i] = strides[i + 1] * dims[i + 1];
-  }
-  std::shared_ptr<DeviceArray> data(
-      std::make_shared<DeviceArray>(size * dtype.size)
-  );
-  return Tensor(dims, strides, data, dtype);
 }

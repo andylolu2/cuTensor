@@ -1,5 +1,6 @@
 #include "ops/gemm/cublaslt.hpp"
 
+#include "fmt/format.h"
 #include "macros.hpp"
 
 #include <cublasLt.h>
@@ -9,6 +10,8 @@ namespace detail {
 
 template <>
 CublasLtGemm<float>::CublasLtGemm(Tensor output, Tensor a, Tensor b) {
+  check_args(output, a, b);
+
   CUBLAS_CHECK(cublasLtCreate(&lightHandle));
   CUDA_CHECK(cudaStreamCreate(&stream));
   CUBLAS_CHECK(
@@ -31,6 +34,8 @@ CublasLtGemm<float>::CublasLtGemm(Tensor output, Tensor a, Tensor b) {
 
 template <>
 CublasLtGemm<half>::CublasLtGemm(Tensor output, Tensor a, Tensor b) {
+  check_args(output, a, b);
+
   CUBLAS_CHECK(cublasLtCreate(&lightHandle));
   CUDA_CHECK(cudaStreamCreate(&stream));
   CUBLAS_CHECK(
@@ -54,7 +59,7 @@ CublasLtGemm<half>::CublasLtGemm(Tensor output, Tensor a, Tensor b) {
 template <typename T>
 CublasLtGemm<T>::CublasLtGemm(Tensor output, Tensor a, Tensor b) {
   throw std::invalid_argument(
-      "Unsupported GEMM datatype: " + output.getDtype().name
+      fmt::format("Unsupported GEMM datatype: {}", output.getDtype().name)
   );
 };
 
@@ -72,9 +77,6 @@ template <typename T>
 void CublasLtGemm<T>::set_matrix_order(
     cublasLtMatrixLayout_t &desc, Tensor tensor
 ) {
-  if (tensor.getNDims() != 2) {
-    throw std::invalid_argument("Only 2D tensors are supported");
-  }
   if (tensor.getStrides()[0] == 1) {
     cublasLtOrder_t col_order = CUBLASLT_ORDER_COL;
     CUBLAS_CHECK(cublasLtMatrixLayoutSetAttribute(
@@ -90,6 +92,31 @@ void CublasLtGemm<T>::set_matrix_order(
   }
 }
 
+template <typename T>
+void CublasLtGemm<T>::check_args(Tensor output, Tensor a, Tensor b) {
+  if ((a.getNDims() != 2) || (b.getNDims() != 2) || (output.getNDims() != 2)) {
+    throw std::invalid_argument("Only 2D tensors are supported");
+  }
+  if ((a.getDtype() != b.getDtype()) || (a.getDtype() != output.getDtype())) {
+    throw std::invalid_argument(fmt::format(
+        "Tensor datatypes do not match for GEMM: {} @ {} -> {}",
+        a.getDtype().name, b.getDtype().name, output.getDtype().name
+    ));
+  }
+  size_t M_a = a.getDims()[0];
+  size_t K_a = a.getDims()[1];
+  size_t K_b = b.getDims()[0];
+  size_t N_b = b.getDims()[1];
+  size_t M_c = output.getDims()[0];
+  size_t N_c = output.getDims()[1];
+  if ((M_a != M_c) || (N_b != N_c) || (K_a != K_b)) {
+    throw std::invalid_argument(fmt::format(
+        "Tensor shapes do not match for GEMM: ({} {}) @ ({} {}) != ({} {})",
+        M_a, K_a, K_b, N_b, M_c, N_c
+    ));
+  }
+}
+
 } // namespace detail
 
 void gemm(Tensor output, Tensor a, Tensor b) {
@@ -97,10 +124,11 @@ void gemm(Tensor output, Tensor a, Tensor b) {
                     detail::CublasLtGemm<T> gemm(output, a, b);
                     T alpha(1), beta(0);
                     CUBLAS_CHECK(cublasLtMatmul(
-                        gemm.lightHandle, gemm.matmulDesc, &alpha, a.getData(),
-                        gemm.Adesc, b.getData(), gemm.Bdesc, &beta,
-                        output.getData(), gemm.Cdesc, output.getData(),
-                        gemm.Cdesc, nullptr, nullptr, 0, gemm.stream
+                        gemm.lightHandle, gemm.matmulDesc, &alpha,
+                        a.getRawData(), gemm.Adesc, b.getRawData(), gemm.Bdesc,
+                        &beta, output.getRawData(), gemm.Cdesc,
+                        output.getRawData(), gemm.Cdesc, nullptr, nullptr, 0,
+                        gemm.stream
                     ));
                   }));
 }

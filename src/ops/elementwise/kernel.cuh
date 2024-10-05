@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/ConstArray.cuh"
 #include "core/Coord.cuh"
+#include "core/SizeArray.cuh"
 #include "ops/utils.cuh"
 
 #include <curand_kernel.h>
@@ -9,8 +9,8 @@
 
 struct TensorDescriptor {
   void *data;
-  ConstArray shape;
-  ConstArray strides;
+  SizeArray shape;
+  SizeArray strides;
 };
 
 template <typename T, typename ElementWiseFunc, typename... TensorDescriptors>

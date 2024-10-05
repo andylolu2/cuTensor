@@ -20,6 +20,7 @@ struct CublasLtGemm {
   ~CublasLtGemm();
 
   void set_matrix_order(cublasLtMatrixLayout_t &desc, Tensor tensor);
+  void check_args(Tensor output, Tensor a, Tensor b);
 };
 } // namespace detail
 

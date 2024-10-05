@@ -1,8 +1,8 @@
 #pragma once
 
-#include "core/ConstArray.cuh"
 #include "core/DataType.hpp"
 #include "core/DeviceArray.hpp"
+#include "core/SizeArray.cuh"
 
 #include <inttypes.h>
 #include <iostream>
@@ -11,8 +11,8 @@
 
 class Tensor {
 private:
-  const ConstArray dims;
-  const ConstArray strides;
+  const SizeArray dims;
+  const SizeArray strides;
   const size_t n_dims;
   const size_t size;
   const DataType &dtype;
@@ -24,19 +24,18 @@ public:
       std::shared_ptr<DeviceArray> data, const DataType &dtype
   );
   Tensor(
-      ConstArray dims, ConstArray strides, std::shared_ptr<DeviceArray> data,
+      SizeArray dims, SizeArray strides, std::shared_ptr<DeviceArray> data,
       const DataType &dtype
   );
   ~Tensor();
 
-  void *getData() const;
+  std::shared_ptr<DeviceArray> getData() const;
+  void *getRawData() const;
   size_t getSize() const;
   size_t getNDims() const;
   const DataType &getDtype() const;
-  ConstArray getDims() const;
-  ConstArray getStrides() const;
+  SizeArray getDims() const;
+  SizeArray getStrides() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Tensor &tensor);
 };
-
-Tensor empty(ConstArray dims, const DataType &dtype);
